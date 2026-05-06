@@ -1,1 +1,3 @@
-export const LATEST_UPDATE_TIME = '2026/05/06 12:00'
+import lastCheckedData from './content.last_checked_date.json'
+
+export const LATEST_UPDATE_TIME = lastCheckedData.updated
