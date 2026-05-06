@@ -1,0 +1,15 @@
+name: playwright-e2e.yml (Public Disabled)
+
+on:
+  workflow_dispatch: {}
+  # schedule:
+  #   - cron: "0 0 * * *"
+
+jobs:
+  disabled:
+    if: ${{ false }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Disabled in public repository
+        run: |
+          echo "This workflow is intentionally disabled in public repository."
