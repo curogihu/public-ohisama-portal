@@ -3,8 +3,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ExternalLink, Calendar, Check, Copy, Share2 } from "lucide-react"
 import { memo, useCallback, useState } from "react"
-import type { Content } from "../types/member"
-import { members } from "../data/members"
+import membersData from "../data/members.json"
+import type { Content, Member } from "../types/member"
 import { cn } from "../lib/utils"
 
 interface ContentCardProps {
@@ -14,6 +14,7 @@ interface ContentCardProps {
 
 const YOUTUBE_CATEGORY_MEMBER_IDS = new Set(["youtube-movie", "youtube-shorts", "youtube-live", "tver"])
 const SHARE_HASHTAG_EXCLUDE_MEMBER_IDS = new Set(["new", "almost-over"])
+const members: Member[] = membersData
 const MEMBER_BY_ID = new Map(members.map((member) => [member.id, member]))
 
 const getDisplayMemberName = (memberId: string, memberName: string) => {

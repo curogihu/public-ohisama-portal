@@ -19,8 +19,8 @@ import {
 import { Search, Filter, Menu } from "lucide-react"
 import { ContentCard } from "./components/content-card"
 import { MemberFilter } from "./components/member-filter"
-import { LATEST_UPDATE_TIME } from "./data/content.last_checked_date"
-import { TVER_CONTENT_UPDATED_DATE } from "./data/content.tver.target"
+import lastCheckedData from "./data/content.last_checked_date.json"
+import tverData from "./data/content.tver.target.json"
 import {
   CONTENT_TYPE_OPTIONS,
   DEFAULT_VIEW_MODE,
@@ -38,6 +38,9 @@ import {
   type PortalInitialState,
   type ViewMode,
 } from "@/lib/portal"
+
+const LATEST_UPDATE_TIME = lastCheckedData.updated
+const TVER_CONTENT_UPDATED_DATE = tverData.updated
 
 type HinatazakaPortalProps = {
   initialState?: PortalInitialState

@@ -5,7 +5,10 @@ import { Badge } from "@/components/ui/badge"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Check, Copy, Menu, Share2, X } from "lucide-react"
 import { useState } from "react"
-import { members } from "../data/members"
+import membersData from "../data/members.json"
+import type { Member } from "../types/member"
+
+const members: Member[] = membersData
 
 const NON_MEMBER_FILTER_IDS = new Set([
   "youtube-movie",

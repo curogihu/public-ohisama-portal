@@ -1,7 +1,11 @@
-import { members } from "@/data/members"
-import { tverContent } from "@/data/content.tver.target"
-import { uploadedYoutubeContent } from "@/data/content.youtube.target"
-import type { Content } from "@/types/member"
+import membersData from "@/data/members.json"
+import tverData from "@/data/content.tver.target.json"
+import youtubeData from "@/data/content.youtube.target.json"
+import type { Content, Member } from "@/types/member"
+
+const members: Member[] = membersData
+const tverContent: Content[] = tverData.content
+const uploadedYoutubeContent: Content[] = youtubeData.content
 
 export type ContentType =
   | "all"
