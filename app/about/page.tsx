@@ -3,13 +3,13 @@ import { DEFAULT_OG_IMAGE, SITE_NAME, getAbsoluteUrl } from "@/lib/seo"
 
 export const metadata: Metadata = {
   title: `About | ${SITE_NAME}`,
-  description: "おひさまポータルについての説明、掲載方針、注意事項、お問い合わせ先をまとめたページです。",
+  description: "公開サンプルポータルの説明、掲載方針、注意事項をまとめたページです。",
   alternates: {
     canonical: "/about",
   },
   openGraph: {
     title: `About | ${SITE_NAME}`,
-    description: "おひさまポータルについての説明、掲載方針、注意事項、お問い合わせ先をまとめたページです。",
+    description: "公開サンプルポータルの説明、掲載方針、注意事項をまとめたページです。",
     url: getAbsoluteUrl("/about"),
     type: "article",
     images: [getAbsoluteUrl(DEFAULT_OG_IMAGE)],
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: `About | ${SITE_NAME}`,
-    description: "おひさまポータルについての説明、掲載方針、注意事項、お問い合わせ先をまとめたページです。",
+    description: "公開サンプルポータルの説明、掲載方針、注意事項をまとめたページです。",
     images: [getAbsoluteUrl(DEFAULT_OG_IMAGE)],
   },
 }
@@ -31,36 +31,22 @@ export default function AboutPage() {
 
           <div className="space-y-4 text-sm md:text-base text-muted-foreground leading-relaxed">
             <p>
-              本サイト「おひさまポータル」は
-              日向坂46および所属事務所とは関係のない
-              非公式のファンサイトです。
-
-              YouTube、TVerなどの外部サービスで公開されている動画や番組情報を紹介しています。
+              本サイト「公開サンプルポータル」は、公開用に調整したデモアプリです。
+              掲載しているメンバー名、番組名、説明文、更新日時はすべてサンプルとして作成した架空データです。
             </p>
 
             <p>
-              掲載している動画・配信情報・画像等の権利は
-              各配信サービスおよび権利者に帰属します。
-
-              また、リンク先サイトの内容やサービスについて
-              本サイトは責任を負いません。
+              外部リンクには example.com を利用しており、実在する動画・番組・人物データは参照していません。
+              このリポジトリは画面構成、絞り込み、SEO設定などの実装例を共有する目的で公開しています。
             </p>
 
             <p>
-              掲載内容に問題がある場合は
-              お問い合わせよりご連絡ください。
-              確認の上、速やかに対応いたします。
+              問い合わせ先や運用窓口は設定していません。
+              必要に応じて利用者の環境に合わせて文言やデータを差し替えて利用してください。
             </p>
           </div>
 
-          <div className="mt-8 border-t pt-6">
-            <h2 className="text-base font-semibold">お問い合わせ</h2>
-            <p className="text-muted-foreground text-sm mt-2">本サイトに関するお問い合わせは</p>
-            <p className="text-muted-foreground text-sm">以下のXアカウントのDMまでお願いいたします。</p>
-            <p className="text-muted-foreground text-sm mt-1">@hikozuma46</p>
-          </div>
-
-          <p className="text-muted-foreground text-xs mt-6">© {new Date().getFullYear()} おひさまポータル</p>
+          <p className="text-muted-foreground text-xs mt-6">© {new Date().getFullYear()} 公開サンプルポータル</p>
         </section>
       </div>
     </main>

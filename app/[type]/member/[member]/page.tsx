@@ -32,8 +32,8 @@ export async function generateMetadata({ params, searchParams }: TypeMemberPageP
     ? `${memberLabel}の${typeLabel}一覧 「${initialState.searchQuery}」 | ${SITE_NAME}`
     : `${memberLabel}の${typeLabel}一覧 | ${SITE_NAME}`
   const description = initialState.searchQuery
-    ? `${memberLabel}に関連する${typeLabel}を「${initialState.searchQuery}」で絞り込んで確認できる日向坂46ファンサイトです。`
-    : `${memberLabel}に関連する${typeLabel}を一覧で確認できる日向坂46ファンサイトです。`
+    ? `${memberLabel}に関連する${typeLabel}を「${initialState.searchQuery}」で絞り込んで確認できる公開サンプルです。`
+    : `${memberLabel}に関連する${typeLabel}を一覧で確認できる公開サンプルです。`
   const canonicalPath = getPublicPathForTypeMember(type, member)
   const hasQueryFilters = Boolean(initialState.searchQuery)
     || Boolean(resolvedSearchParams.page && resolvedSearchParams.page !== "1")
