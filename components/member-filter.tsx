@@ -63,7 +63,7 @@ export function MemberFilter({
     const currentUrl = getCurrentUrl()
     if (!currentUrl) return
 
-    const shareText = "おひさまポータルで絞り込み結果を共有します"
+    const shareText = "公開サンプルポータルで絞り込み結果を共有します"
     const intentUrl = `https://x.com/intent/post?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(currentUrl)}`
     window.open(intentUrl, "_blank", "noopener,noreferrer")
   }

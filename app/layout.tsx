@@ -1,5 +1,4 @@
 import type { Metadata } from "next"
-import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, getAbsoluteUrl, getSiteJsonLd, getSiteUrl, toJsonLd } from "@/lib/seo"
 
@@ -9,14 +8,8 @@ export const metadata: Metadata = {
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,
   manifest: "/manifest.webmanifest",
-  keywords: ["日向坂46", "おひさま", "YouTube", "TVer", "ラジオ", "コラム", "動画一覧", "配信終了"],
+  keywords: ["公開サンプル", "YouTube", "TVer", "動画一覧", "配信終了", "Next.js"],
   category: "entertainment",
-  other: {
-    "google-adsense-account": "ca-pub-2272063808695793",
-  },
-  verification: {
-    google: "pzDJ2JdleA9ozPd2fL8LFq1sxWsmlPrnrSWXyTwHl9I",
-  },
   robots: {
     index: true,
     follow: true,
@@ -63,7 +56,6 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: toJsonLd(getSiteJsonLd()) }}
         />
         {children}
-        <Analytics />
       </body>
     </html>
   )

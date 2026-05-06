@@ -1,5 +1,5 @@
-export const SITE_NAME = "おひさまポータル"
-export const SITE_DESCRIPTION = "日向坂46の現役メンバーやOGのYouTube動画、配信、TVer、音声、コラム情報をまとめて探せるファンサイト。"
+export const SITE_NAME = "公開サンプルポータル"
+export const SITE_DESCRIPTION = "架空のメンバーとサンプル動画データだけで構成した、Next.js 製の公開サンプルポータルです。"
 export const DEFAULT_OG_IMAGE = "/logo.png"
 
 export function getSiteUrl(): string {

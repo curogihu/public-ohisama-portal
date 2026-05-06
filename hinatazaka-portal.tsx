@@ -1,5 +1,4 @@
 "use client"
-import Script from "next/script"
 import Link from "next/link"
 
 import { useEffect, useMemo, useState } from "react"
@@ -369,20 +368,6 @@ export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps
     <div className="min-h-screen bg-gradient-to-br from-pink-50 to-blue-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
-        {/* Google tag (gtag.js) */}
-        <Script 
-          async 
-          src="https://www.googletagmanager.com/gtag/js?id=G-DNC9QPSE9K"
-        />
-        <Script id="google-analytics">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-
-            gtag('config', 'G-DNC9QPSE9K');
-          `}
-        </Script>
         <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="text-center mb-4 sm:mb-6">
               <Link
@@ -392,7 +377,7 @@ export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps
               >
               <img
                 src="/header.png"
-                alt="おひさまポータル"
+                alt="公開サンプルポータル"
                   className="mx-auto h-auto w-[min(100%,28rem)]"
               />
               </Link>
@@ -680,7 +665,7 @@ export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps
           </p>
 
           <p className="text-muted-foreground text-xs mt-2">
-            © {new Date().getFullYear()} おひさまポータル
+            © {new Date().getFullYear()} 公開サンプルポータル
           </p>
 
         </div>

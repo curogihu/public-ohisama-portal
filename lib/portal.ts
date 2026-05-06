@@ -266,7 +266,7 @@ export function getPortalPageHeading({
   const memberNames = getMemberNames(selectedMembers)
 
   if (activeViewMode === "almost-over") {
-    return "日向坂46のまもなく配信終了する番組一覧"
+    return "公開サンプルのまもなく終了するコンテンツ一覧"
   }
 
   if (memberNames.length > 0) {
@@ -274,10 +274,10 @@ export function getPortalPageHeading({
   }
 
   if (selectedType === "all") {
-    return "日向坂46メンバー別コンテンツ一覧"
+    return "サンプルメンバー別コンテンツ一覧"
   }
 
-  return `日向坂46の${getTypeLabel(selectedType)}一覧`
+  return `公開サンプルの${getTypeLabel(selectedType)}一覧`
 }
 
 export function getPortalPageSummary({
@@ -308,10 +308,10 @@ export function getPortalPageSummary({
 
   if (activeViewMode === "almost-over") {
     if (filters.length > 0) {
-      return `日向坂46の配信終了が近い動画・番組を ${filters.join(" / ")} で絞り込んで確認できます。` 
+      return `公開サンプルの配信終了が近いコンテンツを ${filters.join(" / ")} で絞り込んで確認できます。`
     }
 
-    return "日向坂46の配信終了が近い動画・番組を、YouTubeやTVerを横断してまとめて確認できます。"
+    return "公開サンプルの配信終了が近いコンテンツを、YouTube や TVer の体裁でまとめて確認できます。"
   }
 
   if (memberNames.length > 0) {
@@ -319,8 +319,8 @@ export function getPortalPageSummary({
   }
 
   if (selectedType === "all") {
-    return "日向坂46の現役メンバーやOGに関連する動画・番組・コラム情報をメンバー別に探せるファンサイトです。"
+    return "架空メンバーに関連するサンプル動画・番組・コラム情報をメンバー別に確認できるデモページです。"
   }
 
-  return `日向坂46に関連する${getTypeLabel(selectedType)}を、メンバー名やキーワードで絞り込みながら探せます。`
+  return `公開サンプルの${getTypeLabel(selectedType)}を、メンバー名やキーワードで絞り込みながら探せます。`
 }

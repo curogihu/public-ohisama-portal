@@ -44,11 +44,11 @@ export async function generateMetadata({ params, searchParams }: TypePageProps):
     : `${typeLabel}一覧 | ${SITE_NAME}`
   const description = type === "almost-over"
     ? conditions.length > 0
-      ? `日向坂46の配信終了が近い動画・番組を ${conditions.join(" / ")} で絞り込んで確認できるファンサイトです。`
-      : "日向坂46の配信終了が近い動画・番組を、YouTubeやTVerを横断して一覧で確認できるファンサイトです。"
+      ? `公開サンプルの配信終了が近いコンテンツを ${conditions.join(" / ")} で絞り込んで確認できます。`
+      : "公開サンプルの配信終了が近いコンテンツを、YouTube や TVer の体裁で一覧表示します。"
     : initialState.selectedType === "all"
-      ? "日向坂46のメンバー別コンテンツを一覧で探せるファンサイトです。YouTube、TVer、音声、コラム情報を横断して確認できます。"
-      : `日向坂46の${typeLabel}を一覧で確認できるファンサイトです。メンバー名やキーワードでも絞り込めます。`
+      ? "架空メンバーのサンプルコンテンツを一覧で確認できるデモページです。YouTube、TVer、音声、コラムを模したデータを横断表示します。"
+      : `公開サンプルの${typeLabel}を一覧で確認できるデモページです。メンバー名やキーワードでも絞り込めます。`
   const canonicalPath = getPublicPathForType(type)
   const hasQueryFilters = Boolean(initialState.searchQuery)
     || Boolean(resolvedSearchParams.page && resolvedSearchParams.page !== "1")
