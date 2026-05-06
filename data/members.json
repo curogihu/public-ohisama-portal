@@ -1,0 +1,10 @@
+[
+  { "id": "sunrise-aoi", "name": "朝陽あおい", "en_name": "aoi sunrise", "generation": 1, "isActive": true, "profileImage": "/placeholder.svg?height=200&width=200", "birthDate": "2000-01-01", "bloodType": "A", "height": "160cm", "hometown": "サンプル県" },
+  { "id": "sunset-rin", "name": "夕凪りん", "en_name": "rin sunset", "generation": 2, "isActive": true, "profileImage": "/placeholder.svg?height=200&width=200", "birthDate": "2001-02-02", "bloodType": "B", "height": "158cm", "hometown": "サンプル県" },
+  { "id": "moon-haru", "name": "月城はる", "en_name": "haru moon", "generation": 3, "isActive": true, "profileImage": "/placeholder.svg?height=200&width=200", "birthDate": "2002-03-03", "bloodType": "O", "height": "162cm", "hometown": "サンプル県" },
+  { "id": "youtube-movie", "name": "YouTube動画", "en_name": "youtube movie", "generation": 0, "isActive": true, "profileImage": "/placeholder.svg?height=200&width=200", "birthDate": "2000-01-01", "bloodType": "X", "height": "0cm", "hometown": "WEB" },
+  { "id": "youtube-shorts", "name": "YouTubeショート", "en_name": "youtube shorts", "generation": 0, "isActive": true, "profileImage": "/placeholder.svg?height=200&width=200", "birthDate": "2000-01-01", "bloodType": "X", "height": "0cm", "hometown": "WEB" },
+  { "id": "youtube-live", "name": "YouTube配信", "en_name": "youtube live", "generation": 0, "isActive": true, "profileImage": "/placeholder.svg?height=200&width=200", "birthDate": "2000-01-01", "bloodType": "X", "height": "0cm", "hometown": "WEB" },
+  { "id": "tver", "name": "TVer", "en_name": "tver", "generation": 0, "isActive": true, "profileImage": "/placeholder.svg?height=200&width=200", "birthDate": "2000-01-01", "bloodType": "X", "height": "0cm", "hometown": "WEB" },
+  { "id": "almost-over", "name": "まもなく終了", "en_name": "almost over", "generation": 0, "isActive": true, "profileImage": "/placeholder.svg?height=200&width=200", "birthDate": "2000-01-01", "bloodType": "X", "height": "0cm", "hometown": "WEB" }
+]

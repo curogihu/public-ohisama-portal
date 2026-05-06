@@ -1,8 +1,6 @@
 import type { Content } from '../types/member'
+import tverData from './content.tver.target.json'
 
-export const TVER_CONTENT_UPDATED_DATE = '2026/05/06'
+export const TVER_CONTENT_UPDATED_DATE = tverData.updated
 
-export const tverContent: Content[] = [
-  { id: 'tver-fake-001', title: 'サンプルドラマ 第一話', type: 'movie', members: ['sunrise-aoi', 'tver', 'almost-over'], url: 'https://example.com/tver/fake-001', platform: 'TVer', description: '5月09日(土)20:00 終了予定\n公開サンプル用の架空データです', thumbnail: '/placeholder.svg?height=180&width=320', publishDate: '2026/05/06' },
-  { id: 'tver-fake-002', title: 'サンプルトーク番組', type: 'movie', members: ['sunset-rin', 'tver'], url: 'https://example.com/tver/fake-002', platform: 'TVer', description: '配信終了まで1週間以上\n公開サンプル用の架空データです', thumbnail: '/placeholder.svg?height=180&width=320', publishDate: '2026/05/06' },
-]
+export const tverContent: Content[] = tverData.content
