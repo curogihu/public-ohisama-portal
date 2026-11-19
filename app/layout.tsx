@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import "./globals.css"
+import { ThemeProvider } from "@/components/theme-provider"
 import { DEFAULT_OG_IMAGE, SITE_DESCRIPTION, SITE_NAME, getAbsoluteUrl, getSiteJsonLd, getSiteUrl, toJsonLd } from "@/lib/seo"
 
 export const metadata: Metadata = {
@@ -49,13 +50,15 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ja">
+    <html lang="ja" suppressHydrationWarning>
       <body>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: toJsonLd(getSiteJsonLd()) }}
         />
-        {children}
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} storageKey="public-sample-theme">
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )

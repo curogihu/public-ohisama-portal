@@ -22,4 +22,5 @@ export interface Content {
   description: string
   thumbnail: string
   publishDate: string
+  expiresAt: string | null
 }

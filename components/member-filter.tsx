@@ -3,8 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Check, Copy, Menu, Share2, X } from "lucide-react"
-import { useState } from "react"
+import { Menu, X } from "lucide-react"
 import membersData from "../data/members.json"
 import type { Member } from "../types/member"
 
@@ -42,35 +41,6 @@ export function MemberFilter({
 }: MemberFilterProps) {
   const activeMembers = members.filter((m) => m.isActive && !NON_MEMBER_FILTER_IDS.has(m.id))
   const graduatedMembers = members.filter((m) => !m.isActive && !NON_MEMBER_FILTER_IDS.has(m.id))
-  const [isCopied, setIsCopied] = useState(false)
-
-  const getCurrentUrl = () => {
-    if (typeof window === "undefined") return ""
-    return window.location.href
-  }
-
-  const handleCopyUrl = async () => {
-    const currentUrl = getCurrentUrl()
-    if (!currentUrl) return
-
-    try {
-      await navigator.clipboard.writeText(currentUrl)
-      setIsCopied(true)
-      window.setTimeout(() => setIsCopied(false), 2000)
-    } catch {
-      window.prompt("このURLをコピーしてください", currentUrl)
-    }
-  }
-
-  const handleShareToX = () => {
-    const currentUrl = getCurrentUrl()
-    if (!currentUrl) return
-
-    const shareText = "公開サンプルポータルで絞り込み結果を共有します"
-    const intentUrl = `https://x.com/intent/post?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(currentUrl)}`
-    window.open(intentUrl, "_blank", "noopener,noreferrer")
-  }
-
   return (
     <div className="space-y-4">
       {selectedMembers.length > 0 && (
@@ -85,6 +55,7 @@ export function MemberFilter({
                   variant="ghost"
                   size="sm"
                   className="h-auto p-0 hover:bg-transparent"
+                  aria-label={`${member.name}の選択を解除`}
                   onClick={() => onMemberToggle(memberId)}
                 >
                   <X className="w-3 h-3" />
@@ -176,21 +147,7 @@ export function MemberFilter({
         </AccordionItem>
       </Accordion>
 
-      {/*
-      <div className="pt-2 border-t">
-        <p className="text-xs text-muted-foreground mb-2">現在の絞り込みURLを共有</p>
-        <div className="flex flex-wrap gap-2">
-          <Button type="button" variant="outline" size="sm" onClick={handleCopyUrl} className="gap-2">
-            {isCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-            {isCopied ? "コピーしました" : "URLコピー"}
-          </Button>
-          <Button type="button" size="sm" onClick={handleShareToX} className="gap-2">
-            <Share2 className="w-4 h-4" />
-            Xで共有
-          </Button>
-        </div>
-      </div>
-      */}
+
     </div>
   )
 }

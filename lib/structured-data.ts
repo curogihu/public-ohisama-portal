@@ -50,63 +50,15 @@ function getThumbnailUrl(content: Content): string {
     }
   }
 
-  return getAbsoluteUrl("/logo.png")
-}
-
-function getYoutubeVideoId(url: string): string | undefined {
-  try {
-    const parsed = new URL(url)
-    const host = parsed.hostname.replace(/^www\./, "")
-
-    if (host === "youtu.be") {
-      const shortId = parsed.pathname.replace(/^\//, "").split("/")[0]
-      return shortId || undefined
-    }
-
-    if (host.endsWith("youtube.com") || host.endsWith("youtube-nocookie.com")) {
-      if (parsed.pathname === "/watch") {
-        return parsed.searchParams.get("v") ?? undefined
-      }
-
-      if (parsed.pathname.startsWith("/shorts/") || parsed.pathname.startsWith("/embed/")) {
-        const segments = parsed.pathname.split("/")
-        return segments[2] || undefined
-      }
-    }
-
-    return undefined
-  } catch {
-    return undefined
-  }
-}
-
-function getEmbedUrl(content: Content): string | undefined {
-  if (content.platform === "YouTube") {
-    const videoId = getYoutubeVideoId(content.url)
-    if (videoId) {
-      return `https://www.youtube.com/embed/${videoId}`
-    }
-  }
-  return undefined
+  return getAbsoluteUrl("/demo-logo.svg")
 }
 
 function getContentUrl(content: Content): string | undefined {
   return toHttpUrl(content.url)
 }
 
-function getVideoAccessFields(content: Content): { embedUrl?: string; contentUrl?: string } {
-  const safeContentUrl = getContentUrl(content) ?? getSiteUrl()
-
-  if (content.platform === "YouTube") {
-    const embedUrl = getEmbedUrl(content)
-    // If we cannot build embedUrl, keep a valid fallback URL to satisfy VideoObject requirements.
-    if (!embedUrl) {
-      return { contentUrl: safeContentUrl }
-    }
-    return { embedUrl }
-  }
-
-  return { contentUrl: safeContentUrl }
+function getVideoAccessFields(content: Content): { contentUrl: string } {
+  return { contentUrl: getContentUrl(content) ?? getSiteUrl() }
 }
 
 function getContentSchemaType(content: Content): "VideoObject" | "AudioObject" | "Article" | "CreativeWork" {

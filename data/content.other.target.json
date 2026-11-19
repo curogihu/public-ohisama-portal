@@ -1,0 +1,95 @@
+{
+  "updated": "2026/11/19",
+  "content": [
+    {
+      "id": "demo-005",
+      "title": "架空ラジオ 第1回",
+      "type": "audio",
+      "members": [
+        "audio",
+        "sample-aoi"
+      ],
+      "url": "https://example.com/demo/005",
+      "platform": "Radiko（架空）",
+      "description": "公開デモ専用の架空コンテンツです。実在する番組・動画とは関係ありません。",
+      "thumbnail": "/placeholder.svg",
+      "publishDate": "2026/11/15",
+      "expiresAt": "2026-12-01T18:00:00+09:00"
+    },
+    {
+      "id": "demo-006",
+      "title": "デモ制作日記 第1回",
+      "type": "column",
+      "members": [
+        "column",
+        "sample-rin"
+      ],
+      "url": "https://example.com/demo/006",
+      "platform": "サンプル配信",
+      "description": "公開デモ専用の架空コンテンツです。実在する番組・動画とは関係ありません。",
+      "thumbnail": "/placeholder.svg",
+      "publishDate": "2026/11/14",
+      "expiresAt": null
+    },
+    {
+      "id": "demo-011",
+      "title": "架空ラジオ 第2回",
+      "type": "audio",
+      "members": [
+        "audio",
+        "sample-haru"
+      ],
+      "url": "https://example.com/demo/011",
+      "platform": "Radiko（架空）",
+      "description": "公開デモ専用の架空コンテンツです。実在する番組・動画とは関係ありません。",
+      "thumbnail": "/placeholder.svg",
+      "publishDate": "2026/11/17",
+      "expiresAt": "2026-12-01T18:00:00+09:00"
+    },
+    {
+      "id": "demo-012",
+      "title": "デモ制作日記 第2回",
+      "type": "column",
+      "members": [
+        "column",
+        "sample-sora"
+      ],
+      "url": "https://example.com/demo/012",
+      "platform": "サンプル配信",
+      "description": "公開デモ専用の架空コンテンツです。実在する番組・動画とは関係ありません。",
+      "thumbnail": "/placeholder.svg",
+      "publishDate": "2026/11/16",
+      "expiresAt": null
+    },
+    {
+      "id": "demo-017",
+      "title": "架空ラジオ 第3回",
+      "type": "audio",
+      "members": [
+        "audio",
+        "sample-aoi"
+      ],
+      "url": "https://example.com/demo/017",
+      "platform": "Radiko（架空）",
+      "description": "公開デモ専用の架空コンテンツです。実在する番組・動画とは関係ありません。",
+      "thumbnail": "/placeholder.svg",
+      "publishDate": "2026/11/19",
+      "expiresAt": "2026-12-01T18:00:00+09:00"
+    },
+    {
+      "id": "demo-018",
+      "title": "デモ制作日記 第3回",
+      "type": "column",
+      "members": [
+        "column",
+        "sample-rin"
+      ],
+      "url": "https://example.com/demo/018",
+      "platform": "サンプル配信",
+      "description": "公開デモ専用の架空コンテンツです。実在する番組・動画とは関係ありません。",
+      "thumbnail": "/placeholder.svg",
+      "publishDate": "2026/11/18",
+      "expiresAt": null
+    }
+  ]
+}

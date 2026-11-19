@@ -1,11 +1,23 @@
 import membersData from "@/data/members.json"
 import tverData from "@/data/content.tver.target.json"
 import youtubeData from "@/data/content.youtube.target.json"
+import otherData from "@/data/content.other.target.json"
+import demo from "@/data/demo.json"
 import type { Content, Member } from "@/types/member"
 
 const members: Member[] = membersData
-const tverContent: Content[] = tverData.content
-const uploadedYoutubeContent: Content[] = youtubeData.content
+// JSON imports widen literal types. Check the contract instead of suppressing type errors.
+function readContent(items: Array<Omit<Content, "type"> & { type: string }>): Content[] {
+  return items.map((item) => {
+    const type = item.type
+    if (type !== "movie" && type !== "audio" && type !== "tver" && type !== "column") {
+      throw new Error("Invalid demo content type")
+    }
+    return { ...item, type }
+  })
+}
+const tverContent = readContent(tverData.content)
+const uploadedYoutubeContent = readContent(youtubeData.content)
 
 export type ContentType =
   | "all"
@@ -66,56 +78,22 @@ export const VALID_MEMBER_IDS = new Set(
   members.filter((member) => !NON_MEMBER_FILTER_IDS.has(member.id)).map((member) => member.id),
 )
 
-const ALMOST_OVER_MEMBER_ID = "almost-over"
-const ALMOST_OVER_WINDOW_MS = 7 * 24 * 60 * 60 * 1000
-const EXPIRY_WITH_DATE_PATTERN = /^(\d{1,2})月(\d{1,2})日\([^)]*\)(\d{1,2}):(\d{2})\s*終了予定/
+// Demo-only semantics: explicit timestamps and a fixed clock, independent of production rules.
+export const DEMO_REFERENCE_TIME = demo.referenceTime
+export const FAVORITE_MEMBER_IDS = VALID_MEMBER_IDS
+export const ALL_CONTENT: Content[] = [...tverContent, ...uploadedYoutubeContent, ...readContent(otherData.content)]
 
-function parsePublishYear(publishDate: string): number {
-  const matched = publishDate.match(/^(\d{4})\/\d{2}\/\d{2}$/)
-  return matched ? Number.parseInt(matched[1], 10) : new Date().getFullYear()
+export function isAlmostOver(item: Content): boolean {
+  if (!item.expiresAt) return false
+  const remaining = Date.parse(item.expiresAt) - Date.parse(DEMO_REFERENCE_TIME)
+  return remaining >= 0 && remaining <= demo.expiryWindowDays * 86400000
 }
 
-function parseExpiryDate(description: string, publishDate: string): Date | null {
-  const firstLine = description.split("\n")[0]?.trim()
-  if (!firstLine) return null
-
-  const matched = firstLine.match(EXPIRY_WITH_DATE_PATTERN)
-  if (!matched) return null
-
-  const month = Number.parseInt(matched[1], 10)
-  const day = Number.parseInt(matched[2], 10)
-  const hour = Number.parseInt(matched[3], 10)
-  const minute = Number.parseInt(matched[4], 10)
-  const year = parsePublishYear(publishDate)
-
-  const expiryDate = new Date(year, month - 1, day, hour, minute, 0, 0)
-  return Number.isNaN(expiryDate.getTime()) ? null : expiryDate
+export function expiryDayOffset(item: Content): number | null {
+  if (!item.expiresAt) return null
+  const dateInJapan = (value: string) => new Date(Date.parse(value) + 9 * 3600000).toISOString().slice(0, 10)
+  return (Date.parse(dateInJapan(item.expiresAt)) - Date.parse(dateInJapan(DEMO_REFERENCE_TIME))) / 86400000
 }
-
-function appendAlmostOverMember(item: Content, now: Date): Content {
-  if (item.members.includes(ALMOST_OVER_MEMBER_ID)) {
-    return item
-  }
-
-  const expiryDate = parseExpiryDate(item.description, item.publishDate)
-  if (!expiryDate) {
-    return item
-  }
-
-  const remainingMs = expiryDate.getTime() - now.getTime()
-  if (remainingMs < 0 || remainingMs > ALMOST_OVER_WINDOW_MS) {
-    return item
-  }
-
-  return {
-    ...item,
-    members: [...item.members, ALMOST_OVER_MEMBER_ID],
-  }
-}
-
-const normalizedTverContent = tverContent.map((item) => appendAlmostOverMember(item, new Date()))
-
-export const ALL_CONTENT: Content[] = [...normalizedTverContent, ...uploadedYoutubeContent]
 
 export function isValidContentType(value: string): value is ContentType {
   return VALID_CONTENT_TYPES.includes(value as ContentType)
@@ -159,7 +137,9 @@ export function parseMemberIds(value?: string): string[] {
     new Set(
       value
         .split(",")
-        .map((memberId) => decodeURIComponent(memberId.trim()))
+        .map((memberId) => {
+          try { return decodeURIComponent(memberId.trim()) } catch { return "" }
+        })
         .filter((memberId) => VALID_MEMBER_IDS.has(memberId)),
     ),
   ).slice(0, MAX_MEMBER_FILTERS)
@@ -207,7 +187,7 @@ export function filterContentItems({
       return false
     }
 
-    if (onlyAlmostOver && !item.members.includes("almost-over")) {
+    if (onlyAlmostOver && !isAlmostOver(item)) {
       return false
     }
 

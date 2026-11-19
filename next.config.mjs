@@ -11,16 +11,18 @@ const contentSecurityPolicy = [
   "base-uri 'self'",
   "frame-ancestors 'none'",
   "object-src 'none'",
-  "img-src 'self' data: blob: https:",
+  "img-src 'self' data:",
   "font-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
   `script-src ${scriptSrc}`,
   "connect-src 'self'",
-  "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com",
-  "upgrade-insecure-requests",
+  "frame-src 'none'",
+  ...(isDevelopment ? [] : ["upgrade-insecure-requests"]),
 ].join("; ")
 
 const nextConfig = {
+  // Keep development-generated instruction files out of the reviewed public file set.
+  agentRules: false,
   async redirects() {
     return [
       {
@@ -77,9 +79,6 @@ const nextConfig = {
         ],
       },
     ]
-  },
-  eslint: {
-    ignoreDuringBuilds: false,
   },
   typescript: {
     ignoreBuildErrors: false,

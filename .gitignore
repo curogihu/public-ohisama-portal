@@ -4,3 +4,9 @@ coverage
 *.log
 .env
 .env.*
+!.env.example
+playwright-report/
+test-results/
+*.tsbuildinfo
+__pycache__/
+dist/

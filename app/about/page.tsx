@@ -24,9 +24,9 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-pink-50 to-blue-50">
+    <main className="min-h-screen bg-background">
       <div className="max-w-3xl mx-auto px-4 py-10">
-        <section className="bg-white border rounded-lg p-6 md:p-8 shadow-sm">
+        <section className="bg-card border rounded-lg p-6 md:p-8 shadow-sm">
           <h1 className="text-2xl font-bold mb-6">About</h1>
 
           <div className="space-y-4 text-sm md:text-base text-muted-foreground leading-relaxed">
@@ -40,6 +40,10 @@ export default function AboutPage() {
               このリポジトリは画面構成、絞り込み、SEO設定などの実装例を共有する目的で公開しています。
             </p>
 
+            <p>
+              表示日時は固定したデモ基準日時に基づきます。お気に入りとテーマ設定はブラウザ内に保存されます。
+              本番データの収集やアクセス解析は行いません。
+            </p>
             <p>
               問い合わせ先や運用窓口は設定していません。
               必要に応じて利用者の環境に合わせて文言やデータを差し替えて利用してください。

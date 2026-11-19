@@ -20,9 +20,13 @@ import { Search, Filter, Menu } from "lucide-react"
 import { ContentCard } from "./components/content-card"
 import { MemberFilter } from "./components/member-filter"
 import lastCheckedData from "./data/content.last_checked_date.json"
-import tverData from "./data/content.tver.target.json"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { FavoriteMemberSettings } from "@/components/favorite-member-settings"
+import { loadFavoriteMemberIds, saveFavoriteMemberIds } from "@/lib/favorite-members"
 import {
   CONTENT_TYPE_OPTIONS,
+  DEMO_REFERENCE_TIME,
+  expiryDayOffset,
   DEFAULT_VIEW_MODE,
   LEGACY_SEARCH_PATH,
   MAX_QUERY_LENGTH,
@@ -40,60 +44,17 @@ import {
 } from "@/lib/portal"
 
 const LATEST_UPDATE_TIME = lastCheckedData.updated
-const TVER_CONTENT_UPDATED_DATE = tverData.updated
 
 type HinatazakaPortalProps = {
   initialState?: PortalInitialState
 }
 
-const EXPIRY_WITH_DATE_PATTERN = /^(\d{1,2})月(\d{1,2})日\([^)]*\)(\d{1,2}):(\d{2})\s*終了予定/
-
-const parsePublishYear = (publishDate: string) => {
-  const matched = publishDate.match(/^(\d{4})\/\d{2}\/\d{2}$/)
-  return matched ? Number.parseInt(matched[1], 10) : new Date().getFullYear()
-}
-
-const parseAlmostOverEndDateMs = (publishDate: string, description: string) => {
-  const matched = description.match(EXPIRY_WITH_DATE_PATTERN)
-  if (!matched) return null
-
-  const [, month, day, hour, minute] = matched
-  const endDate = new Date(
-    parsePublishYear(publishDate),
-    Number.parseInt(month, 10) - 1,
-    Number.parseInt(day, 10),
-    Number.parseInt(hour, 10),
-    Number.parseInt(minute, 10),
-  )
-
-  return Number.isNaN(endDate.getTime()) ? null : endDate.getTime()
-}
-
-const formatGroupEndDate = (endDate: Date, groupType: "today" | "tomorrow" | "twoDays" | "oneWeek"): string => {
-  const year = endDate.getFullYear()
-  const month = String(endDate.getMonth() + 1).padStart(2, "0")
-  const day = String(endDate.getDate()).padStart(2, "0")
-  
-  if (groupType === "today") {
-    return `${year}/${month}/${day} 配信終了`
-  } else if (groupType === "tomorrow") {
-    return `${year}/${month}/${day} 配信終了`
-  } else if (groupType === "twoDays") {
-    return `${year}/${month}/${day} 配信終了`
-  } else if (groupType === "oneWeek") {
-    return `${year}/${month}/${day} までに配信終了`
-  }
-  
-  return ""
-}
-
-const parseTverContentUpdateDateMs = (dateStr: string): number => {
-  const [year, month, day] = dateStr.split("/").map((n) => Number.parseInt(n, 10))
-  return new Date(year, month - 1, day, 0, 0, 0, 0).getTime()
-}
+// Demo dates use the explicit JSON reference time in both server and browser.
+const formatGroupEndDate = (endDate: Date, _groupType: string): string =>
+  `${new Intl.DateTimeFormat("ja-JP", { timeZone: "Asia/Tokyo", year: "numeric", month: "2-digit", day: "2-digit" }).format(endDate)} までに配信終了`
 
 export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps) {
-  const ITEMS_PER_PAGE = 30
+  const ITEMS_PER_PAGE = 6
   const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
 
   const [selectedType, setSelectedType] = useState<ContentType>(initialState?.selectedType ?? "all")
@@ -103,88 +64,44 @@ export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps
   const [currentPage, setCurrentPage] = useState(initialState?.currentPage ?? 1)
   const [activeViewMode, setActiveViewMode] = useState<ViewMode>(initialState?.activeViewMode ?? DEFAULT_VIEW_MODE)
   const [isHydratedFromUrl, setIsHydratedFromUrl] = useState(Boolean(initialState))
-  const [nowMs, setNowMs] = useState<number | null>(null)
+  const nowMs = Date.parse(DEMO_REFERENCE_TIME)
+  const [favoriteMemberIds, setFavoriteMemberIds] = useState<string[]>([])
+  const [favoritesReady, setFavoritesReady] = useState(false)
+  const [onlyFavorites, setOnlyFavorites] = useState(true)
 
-  const filteredContent = useMemo(() => {
-    return filterContentItems({
-      type: selectedType,
-      memberIds: selectedMembers,
-      query: searchQuery,
-    })
-  }, [selectedType, selectedMembers, searchQuery])
+  useEffect(() => {
+    setFavoriteMemberIds(loadFavoriteMemberIds())
+    setFavoritesReady(true)
+  }, [])
+  const applyFavorites = (items: ReturnType<typeof filterContentItems>) =>
+    onlyFavorites && favoriteMemberIds.length
+      ? items.filter((item) => favoriteMemberIds.some((id) => item.members.includes(id)))
+      : items
 
-  const almostOverContent = useMemo(() => {
-    const baseNowMs = parseTverContentUpdateDateMs(TVER_CONTENT_UPDATED_DATE)
+  const filteredContent = useMemo(() => applyFavorites(filterContentItems({
+    type: selectedType, memberIds: selectedMembers, query: searchQuery,
+  })), [selectedType, selectedMembers, searchQuery, favoriteMemberIds, onlyFavorites])
 
-    return filterContentItems({
-      type: selectedType,
-      memberIds: selectedMembers,
-      query: searchQuery,
-    }).filter((item) => {
-      if (item.members.includes("almost-over")) {
-        return true
-      }
-
-      const endDateMs = parseAlmostOverEndDateMs(item.publishDate, item.description)
-      if (endDateMs == null) {
-        return false
-      }
-
-      const remainingMs = endDateMs - baseNowMs
-      return remainingMs >= 0 && remainingMs <= ONE_DAY_IN_MS * 7
-    })
-  }, [selectedType, selectedMembers, searchQuery])
+  const almostOverContent = useMemo(() => applyFavorites(filterContentItems({
+    type: selectedType, memberIds: selectedMembers, query: searchQuery, onlyAlmostOver: true,
+  })), [selectedType, selectedMembers, searchQuery, favoriteMemberIds, onlyFavorites])
 
   const almostOverGroups = useMemo(() => {
-    const baseNowMs = parseTverContentUpdateDateMs(TVER_CONTENT_UPDATED_DATE)
-    const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000
-
+    const reference = Date.parse(DEMO_REFERENCE_TIME)
     const groups = {
-      today: { items: [] as typeof almostOverContent, endDate: new Date(baseNowMs) },
-      tomorrow: { items: [] as typeof almostOverContent, endDate: new Date(baseNowMs + ONE_DAY_IN_MS) },
-      twoDays: { items: [] as typeof almostOverContent, endDate: new Date(baseNowMs + 2 * ONE_DAY_IN_MS) },
-      oneWeek: { items: [] as typeof almostOverContent, endDate: new Date(baseNowMs + 7 * ONE_DAY_IN_MS) },
+      today: { items: [] as typeof almostOverContent, endDate: new Date(reference) },
+      tomorrow: { items: [] as typeof almostOverContent, endDate: new Date(reference + ONE_DAY_IN_MS) },
+      twoDays: { items: [] as typeof almostOverContent, endDate: new Date(reference + 2 * ONE_DAY_IN_MS) },
+      oneWeek: { items: [] as typeof almostOverContent, endDate: new Date(reference + 7 * ONE_DAY_IN_MS) },
     }
-
-    return almostOverContent.reduce(
-      (groupsAcc, item) => {
-        const endDateMs = parseAlmostOverEndDateMs(item.publishDate, item.description)
-        if (endDateMs == null) {
-          groupsAcc.twoDays.items.push(item)
-          return groupsAcc
-        }
-
-        const endDate = new Date(endDateMs)
-        const nowDate = new Date(baseNowMs)
-        const endDateStart = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate()).getTime()
-        const nowDateStart = new Date(nowDate.getFullYear(), nowDate.getMonth(), nowDate.getDate()).getTime()
-        const dayDiff = Math.floor((endDateStart - nowDateStart) / ONE_DAY_IN_MS)
-
-        if (dayDiff <= 0) {
-          groupsAcc.today.items.push(item)
-          return groupsAcc
-        }
-
-        if (dayDiff === 1) {
-          groupsAcc.tomorrow.items.push(item)
-          return groupsAcc
-        }
-
-        if (dayDiff === 2) {
-          groupsAcc.twoDays.items.push(item)
-          return groupsAcc
-        }
-
-        if (dayDiff <= 7) {
-          groupsAcc.oneWeek.items.push(item)
-          return groupsAcc
-        }
-
-        groupsAcc.twoDays.items.push(item)
-        return groupsAcc
-      },
-      groups,
-    )
+    for (const item of almostOverContent) {
+      const day = expiryDayOffset(item)
+      if (day === 0) groups.today.items.push(item)
+      else if (day === 1) groups.tomorrow.items.push(item)
+      else if (day === 2) groups.twoDays.items.push(item)
+      else groups.oneWeek.items.push(item)
+    }
+    return groups
   }, [almostOverContent])
 
   const totalPages = Math.ceil(filteredContent.length / ITEMS_PER_PAGE)
@@ -257,10 +174,6 @@ export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps
     }
 
     setIsHydratedFromUrl(true)
-  }, [])
-
-  useEffect(() => {
-    setNowMs(Date.now())
   }, [])
 
   useEffect(() => {
@@ -368,9 +281,9 @@ export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps
   }, [activeViewMode, searchQuery, selectedMembers, selectedType])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-blue-50 dark:from-slate-950 dark:to-slate-900">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-card shadow-sm border-b">
         <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="text-center mb-4 sm:mb-6">
               <Link
@@ -378,17 +291,28 @@ export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps
                 aria-label="まもなく配信終了ページへ移動"
                 className="inline-flex items-center justify-center"
               >
-              <img
-                src="/header.png"
-                alt="公開サンプルポータル"
-                  className="mx-auto h-auto w-[min(100%,28rem)]"
-              />
+                <img src="/demo-logo.svg" alt="" className="mr-3 h-10 w-10" />
+                <span className="text-xl font-bold text-foreground">公開サンプルポータル</span>
               </Link>
-            <h1 className="mt-3 text-lg font-semibold tracking-tight text-slate-900 sm:text-2xl">{pageHeading}</h1>
+            <h1 className="mt-3 text-lg font-semibold tracking-tight text-foreground sm:text-2xl">{pageHeading}</h1>
             <p className="text-muted-foreground mt-2 text-xs sm:text-sm">{pageSummary}</p>
-            <p className="text-muted-foreground mt-2 text-xs sm:text-sm">更新日時: {LATEST_UPDATE_TIME}</p>
+            <p className="text-muted-foreground mt-2 text-xs sm:text-sm">デモ基準日時: {LATEST_UPDATE_TIME.replace("T", " ")}（架空データ）</p>
           </div>
 
+          <div className="mb-4 flex flex-wrap items-center justify-center gap-2">
+            <ThemeToggle />
+            <FavoriteMemberSettings favoriteMemberIds={favoriteMemberIds} isReady={favoritesReady} onSave={(ids) => {
+              setFavoriteMemberIds(saveFavoriteMemberIds(ids))
+              setOnlyFavorites(true)
+              setCurrentPage(1)
+            }} />
+            {favoriteMemberIds.length > 0 && (
+              <Button variant="outline" size="sm" aria-pressed={onlyFavorites} onClick={() => {
+                setOnlyFavorites((value) => !value)
+                setCurrentPage(1)
+              }}>{onlyFavorites ? "お気に入りで絞り込み中" : "お気に入りで絞る"}</Button>
+            )}
+          </div>
           <div className="max-w-3xl mx-auto mb-3 sm:mb-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 rounded-2xl border-2 border-amber-200 bg-amber-50 p-2 shadow-sm">
               <Button
@@ -398,7 +322,7 @@ export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps
                 className={`h-12 sm:h-14 text-sm sm:text-base font-bold tracking-wide border-2 ${
                   activeViewMode === "almost-over"
                     ? "bg-rose-500 text-white border-rose-600 shadow-md hover:bg-rose-500"
-                    : "bg-white text-rose-700 border-rose-300 hover:bg-rose-100"
+                    : "bg-card text-rose-700 border-rose-300 hover:bg-rose-100"
                 }`}
               >
                 <Link href="/almost-over" className="flex items-center justify-center gap-2">
@@ -406,7 +330,7 @@ export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps
                   <span
                     className={`inline-flex min-w-7 items-center justify-center rounded-full px-2 py-0.5 text-xs font-semibold ${
                       activeViewMode === "almost-over"
-                        ? "bg-white/20 text-white"
+                        ? "bg-card/20 text-white"
                         : "bg-rose-100 text-rose-900"
                     }`}
                   >
@@ -421,7 +345,7 @@ export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps
                 className={`h-12 sm:h-14 text-sm sm:text-base font-bold tracking-wide border-2 ${
                   activeViewMode === "search"
                     ? "bg-sky-500 text-white border-sky-600 shadow-md hover:bg-sky-500"
-                    : "bg-white text-sky-700 border-sky-300 hover:bg-sky-100"
+                    : "bg-card text-sky-700 border-sky-300 hover:bg-sky-100"
                 }`}
               >
                 <Link href="/all">メンバーで探す</Link>
@@ -435,7 +359,8 @@ export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
-                  placeholder="タイトル、メンバー名で検索..."
+                  aria-label="コンテンツを検索"
+                  placeholder="番組名、動画タイトルなどで検索..."
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value.slice(0, MAX_QUERY_LENGTH))
@@ -480,8 +405,8 @@ export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps
         {activeViewMode === "almost-over" ? (
           almostOverContent.length > 0 ? (
             <section className="space-y-3 sm:space-y-4">
-              <Accordion type="multiple" className="space-y-3 sm:space-y-4">
-                <AccordionItem value="today" className="rounded-xl border bg-white px-4">
+              <Accordion type="multiple" defaultValue={["today", "tomorrow", "two-days", "one-week"]} className="space-y-3 sm:space-y-4">
+                <AccordionItem value="today" className="rounded-xl border bg-card px-4">
                   <AccordionTrigger className="text-left text-lg font-semibold hover:no-underline">
                     <span className="flex items-center gap-2">
                       <Menu className="h-4 w-4" />
@@ -501,7 +426,7 @@ export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="tomorrow" className="rounded-xl border bg-white px-4">
+                <AccordionItem value="tomorrow" className="rounded-xl border bg-card px-4">
                   <AccordionTrigger className="text-left text-lg font-semibold hover:no-underline">
                     <span className="flex items-center gap-2">
                       <Menu className="h-4 w-4" />
@@ -521,7 +446,7 @@ export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="two-days" className="rounded-xl border bg-white px-4">
+                <AccordionItem value="two-days" className="rounded-xl border bg-card px-4">
                   <AccordionTrigger className="text-left text-lg font-semibold hover:no-underline">
                     <span className="flex items-center gap-2">
                       <Menu className="h-4 w-4" />
@@ -541,7 +466,7 @@ export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="one-week" className="rounded-xl border bg-white px-4">
+                <AccordionItem value="one-week" className="rounded-xl border bg-card px-4">
                   <AccordionTrigger className="text-left text-lg font-semibold hover:no-underline">
                     <span className="flex items-center gap-2">
                       <Menu className="h-4 w-4" />
@@ -658,9 +583,9 @@ export default function HinatazakaPortal({ initialState }: HinatazakaPortalProps
       </div>
 
       {/* Footer */}
-      <footer className="bg-white border-t mt-12">
+      <footer className="bg-card border-t mt-12">
           <div className="max-w-6xl mx-auto px-3 sm:px-4 py-6 sm:py-8 text-center">
-          <p className="text-muted-foreground text-sm">サイトの説明・注意事項・お問い合わせ先は About をご確認ください。</p>
+          <p className="text-muted-foreground text-sm">架空データで動作する公開デモです。サイトの説明は About をご確認ください。</p>
           <p className="mt-2">
             <Link href="/about" className="text-sm text-blue-600 hover:underline">
               About

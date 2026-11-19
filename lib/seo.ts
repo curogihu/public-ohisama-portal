@@ -1,6 +1,6 @@
 export const SITE_NAME = "公開サンプルポータル"
 export const SITE_DESCRIPTION = "架空のメンバーとサンプル動画データだけで構成した、Next.js 製の公開サンプルポータルです。"
-export const DEFAULT_OG_IMAGE = "/logo.png"
+export const DEFAULT_OG_IMAGE = "/demo-logo.svg"
 
 export function getSiteUrl(): string {
   const candidate = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL ?? "http://localhost:3000"

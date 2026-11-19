@@ -1,8 +1,140 @@
 {
-  "updated": "2026/05/05",
+  "updated": "2026/11/19",
   "content": [
-    { "id": "youtube-fake-001", "title": "公開サンプル: メイキングムービー", "type": "movie", "members": ["youtube-movie", "moon-haru"], "url": "https://example.com/youtube/fake-001", "platform": "YouTube", "description": "公開サンプル用の架空データです", "thumbnail": "/placeholder.svg?height=180&width=320", "publishDate": "2026/05/05" },
-    { "id": "youtube-fake-002", "title": "公開サンプル: ショートクリップ", "type": "movie", "members": ["youtube-shorts", "sunrise-aoi"], "url": "https://example.com/youtube/fake-002", "platform": "YouTube", "description": "公開サンプル用の架空データです", "thumbnail": "/placeholder.svg?height=180&width=320", "publishDate": "2026/05/04" },
-    { "id": "youtube-fake-003", "title": "公開サンプル: 生配信アーカイブ", "type": "movie", "members": ["youtube-live", "sunset-rin"], "url": "https://example.com/youtube/fake-003", "platform": "YouTube", "description": "公開サンプル用の架空データです", "thumbnail": "/placeholder.svg?height=180&width=320", "publishDate": "2026/05/03" }
+    {
+      "id": "demo-002",
+      "title": "架空の街歩き 第1回",
+      "type": "movie",
+      "members": [
+        "sample-rin",
+        "youtube-movie"
+      ],
+      "url": "https://example.com/demo/002",
+      "platform": "YouTube（架空）",
+      "description": "公開デモ専用の架空コンテンツです。実在する番組・動画とは関係ありません。",
+      "thumbnail": "/placeholder.svg",
+      "publishDate": "2026/11/18",
+      "expiresAt": "2026-11-20T18:00:00+09:00"
+    },
+    {
+      "id": "demo-003",
+      "title": "デモのショート 第1回",
+      "type": "movie",
+      "members": [
+        "sample-haru",
+        "youtube-shorts"
+      ],
+      "url": "https://example.com/demo/003",
+      "platform": "YouTube（架空）",
+      "description": "公開デモ専用の架空コンテンツです。実在する番組・動画とは関係ありません。",
+      "thumbnail": "/placeholder.svg",
+      "publishDate": "2026/11/17",
+      "expiresAt": "2026-11-21T18:00:00+09:00"
+    },
+    {
+      "id": "demo-004",
+      "title": "サンプルトーク 第1回",
+      "type": "movie",
+      "members": [
+        "sample-sora",
+        "youtube-live"
+      ],
+      "url": "https://example.com/demo/004",
+      "platform": "YouTube（架空）",
+      "description": "公開デモ専用の架空コンテンツです。実在する番組・動画とは関係ありません。",
+      "thumbnail": "/placeholder.svg",
+      "publishDate": "2026/11/16",
+      "expiresAt": "2026-11-24T18:00:00+09:00"
+    },
+    {
+      "id": "demo-008",
+      "title": "架空の街歩き 第2回",
+      "type": "movie",
+      "members": [
+        "sample-sora",
+        "youtube-movie"
+      ],
+      "url": "https://example.com/demo/008",
+      "platform": "YouTube（架空）",
+      "description": "公開デモ専用の架空コンテンツです。実在する番組・動画とは関係ありません。",
+      "thumbnail": "/placeholder.svg",
+      "publishDate": "2026/11/12",
+      "expiresAt": "2026-11-20T18:00:00+09:00"
+    },
+    {
+      "id": "demo-009",
+      "title": "デモのショート 第2回",
+      "type": "movie",
+      "members": [
+        "sample-aoi",
+        "youtube-shorts"
+      ],
+      "url": "https://example.com/demo/009",
+      "platform": "YouTube（架空）",
+      "description": "公開デモ専用の架空コンテンツです。実在する番組・動画とは関係ありません。",
+      "thumbnail": "/placeholder.svg",
+      "publishDate": "2026/11/19",
+      "expiresAt": "2026-11-21T18:00:00+09:00"
+    },
+    {
+      "id": "demo-010",
+      "title": "サンプルトーク 第2回",
+      "type": "movie",
+      "members": [
+        "sample-rin",
+        "youtube-live"
+      ],
+      "url": "https://example.com/demo/010",
+      "platform": "YouTube（架空）",
+      "description": "公開デモ専用の架空コンテンツです。実在する番組・動画とは関係ありません。",
+      "thumbnail": "/placeholder.svg",
+      "publishDate": "2026/11/18",
+      "expiresAt": "2026-11-24T18:00:00+09:00"
+    },
+    {
+      "id": "demo-014",
+      "title": "架空の街歩き 第3回",
+      "type": "movie",
+      "members": [
+        "sample-rin",
+        "youtube-movie"
+      ],
+      "url": "https://example.com/demo/014",
+      "platform": "YouTube（架空）",
+      "description": "公開デモ専用の架空コンテンツです。実在する番組・動画とは関係ありません。",
+      "thumbnail": "/placeholder.svg",
+      "publishDate": "2026/11/14",
+      "expiresAt": "2026-11-20T18:00:00+09:00"
+    },
+    {
+      "id": "demo-015",
+      "title": "デモのショート 第3回",
+      "type": "movie",
+      "members": [
+        "sample-haru",
+        "youtube-shorts"
+      ],
+      "url": "https://example.com/demo/015",
+      "platform": "YouTube（架空）",
+      "description": "公開デモ専用の架空コンテンツです。実在する番組・動画とは関係ありません。",
+      "thumbnail": "/placeholder.svg",
+      "publishDate": "2026/11/13",
+      "expiresAt": "2026-11-21T18:00:00+09:00"
+    },
+    {
+      "id": "demo-016",
+      "title": "サンプルトーク 第3回",
+      "type": "movie",
+      "members": [
+        "sample-sora",
+        "youtube-live"
+      ],
+      "url": "https://example.com/demo/016",
+      "platform": "YouTube（架空）",
+      "description": "公開デモ専用の架空コンテンツです。実在する番組・動画とは関係ありません。",
+      "thumbnail": "/placeholder.svg",
+      "publishDate": "2026/11/12",
+      "expiresAt": "2026-11-24T18:00:00+09:00"
+    }
   ]
 }

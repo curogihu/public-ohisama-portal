@@ -1,8 +1,8 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ExternalLink, Calendar, Check, Copy, Share2 } from "lucide-react"
-import { memo, useCallback, useState } from "react"
+import { ExternalLink, Calendar } from "lucide-react"
+import { memo } from "react"
 import membersData from "../data/members.json"
 import type { Content, Member } from "../types/member"
 import { cn } from "../lib/utils"
@@ -13,38 +13,16 @@ interface ContentCardProps {
 }
 
 const YOUTUBE_CATEGORY_MEMBER_IDS = new Set(["youtube-movie", "youtube-shorts", "youtube-live", "tver"])
-const SHARE_HASHTAG_EXCLUDE_MEMBER_IDS = new Set(["new", "almost-over"])
 const members: Member[] = membersData
 const MEMBER_BY_ID = new Map(members.map((member) => [member.id, member]))
-
-const getDisplayMemberName = (memberId: string, memberName: string) => {
-  return memberId.toLowerCase().includes("tver") ? "TVer" : memberName
-}
-
-const buildMemberHashtags = (memberIds: string[]) => {
-  const seenMemberIds = new Set<string>()
-
-  return memberIds
-    .map((memberId) => {
-      if (SHARE_HASHTAG_EXCLUDE_MEMBER_IDS.has(memberId)) return null
-      if (seenMemberIds.has(memberId)) return null
-
-      const member = MEMBER_BY_ID.get(memberId)
-      if (!member) return null
-
-      seenMemberIds.add(memberId)
-      return `#${getDisplayMemberName(member.id, member.name)}`
-    })
-    .filter((hashtag): hashtag is string => hashtag !== null)
-    .join(" ")
-}
+const getDisplayMemberName = (_memberId: string, memberName: string) => memberName
 
 const toSafeHttpUrl = (value: string | undefined) => {
   if (!value) return null
 
   try {
     const url = new URL(value)
-    if (url.protocol === "http:" || url.protocol === "https:") {
+    if (url.protocol === "https:" && url.hostname === "example.com") {
       return url.toString()
     }
     return null
@@ -56,23 +34,10 @@ const toSafeHttpUrl = (value: string | undefined) => {
 const toSafeImageUrl = (value: string | undefined) => {
   if (!value) return null
 
-  if (value.startsWith("/")) {
-    return value
-  }
-
-  try {
-    const url = new URL(value)
-    if (url.protocol === "http:" || url.protocol === "https:") {
-      return url.toString()
-    }
-    return null
-  } catch {
-    return null
-  }
+  return value === "/placeholder.svg" ? value : null
 }
 
 function ContentCardComponent({ content }: ContentCardProps) {
-  const [isCopied, setIsCopied] = useState(false)
   const seenMemberIds = new Set<string>()
 
   const findUniqueMember = (memberId: string) => {
@@ -103,46 +68,6 @@ function ContentCardComponent({ content }: ContentCardProps) {
     .map((line) => line.trim())
     .filter(Boolean)
     .join("\n")
-  const handleCopyShareUrl = useCallback(async () => {
-    if (!safeContentUrl) return
-
-    try {
-      await navigator.clipboard.writeText(safeContentUrl)
-      setIsCopied(true)
-      window.setTimeout(() => setIsCopied(false), 2000)
-    } catch {
-      window.prompt("このURLをコピーしてください", safeContentUrl)
-    }
-  }, [safeContentUrl])
-
-  const handleShareToX = useCallback(() => {
-    if (!safeContentUrl) return
-
-    const memberHashtags = buildMemberHashtags(content.members)
-    const shareText = memberHashtags
-      ? `${content.title}\n${safeContentUrl}\n${memberHashtags}`
-      : `${content.title}\n${safeContentUrl}`
-    const intentUrl = `https://x.com/intent/post?text=${encodeURIComponent(shareText)}`
-    window.open(intentUrl, "_blank", "noopener,noreferrer")
-  }, [content.members, content.title, safeContentUrl])
-
-  const handleWatchButtonClick = useCallback(() => {
-    if (!safeContentUrl || typeof window === "undefined") return
-
-    const gtag = (window as typeof window & {
-      gtag?: (command: string, eventName: string, params: Record<string, string>) => void
-    }).gtag
-    if (typeof gtag !== "function") return
-
-    gtag("event", "watch_button_click", {
-      content_id: content.id,
-      content_title: content.title,
-      content_type: content.type,
-      platform: content.platform,
-      destination_url: safeContentUrl,
-    })
-  }, [content.id, content.platform, content.title, content.type, safeContentUrl])
-
   const getTypeColor = (type: string) => {
     switch (type) {
       case "movie":
@@ -175,6 +100,10 @@ function ContentCardComponent({ content }: ContentCardProps) {
 
   const getWatchButtonLabel = (platform: string) => {
     const normalizedPlatform = platform.toLowerCase()
+
+    if (normalizedPlatform.includes("radiko")) {
+      return "Radikoで聴く"
+    }
 
     if (normalizedPlatform.includes("tver")) {
       return "TVerで見る"
@@ -243,29 +172,17 @@ function ContentCardComponent({ content }: ContentCardProps) {
           <span>{content.platform}</span>
         </div>
       </CardContent>
+      {content.expiresAt && (
+        <p className="px-3 pb-3 text-xs text-muted-foreground sm:px-4">
+          終了日時: {new Intl.DateTimeFormat("ja-JP", { timeZone: "Asia/Tokyo", dateStyle: "short", timeStyle: "short" }).format(new Date(content.expiresAt))} JST
+        </p>
+      )}
       <CardFooter className="p-3 pt-0 sm:p-4 sm:pt-0">
         {safeContentUrl ? (
           <div className="w-full space-y-2">
-            {/*
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="text-xs sm:text-sm"
-                onClick={handleCopyShareUrl}
-              >
-                {isCopied ? <Check className="w-3.5 h-3.5 mr-1" /> : <Copy className="w-3.5 h-3.5 mr-1" />}
-                {isCopied ? "コピーしました" : "URLコピー"}
-              </Button>
-              <Button type="button" variant="outline" size="sm" className="text-xs sm:text-sm" onClick={handleShareToX}>
-                <Share2 className="w-3.5 h-3.5 mr-1" />
-                Xで共有
-              </Button>
-            </div>
-            */}
+
             <Button asChild className="w-full h-11 sm:h-10 text-sm" size="default">
-              <a href={safeContentUrl} target="_blank" rel="noopener noreferrer" onClick={handleWatchButtonClick}>
+              <a href={safeContentUrl} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="w-4 h-4 mr-2" />
                 {watchButtonLabel}
               </a>
